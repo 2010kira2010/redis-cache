@@ -6,11 +6,10 @@ import (
 )
 
 func (c *Cache) StoreValue(value interface{}, trigger string, id int) {
-	loadValue, errLoadValue := c.LoadOneValue(value, id, trigger)
+	loadValue, errLoadValue := c.LoadOneValue(id, trigger)
 	if errLoadValue {
-		dataOne, _ := json.Marshal(loadValue)
 		dataTwo, _ := json.Marshal(value)
-		mergedJSON, err := mergeInterface(string(dataOne), string(dataTwo))
+		mergedJSON, err := mergeInterface(loadValue, string(dataTwo))
 		if err == nil {
 			c.RedisClient.HSet(context.Background(), trigger, int64(id), mergedJSON)
 		}
