@@ -6,9 +6,9 @@ import (
 	"strconv"
 )
 
-func (c *Cache) LoadOneValue(id int, trigger string) (string, bool) {
+func (c *Cache) LoadOneValue(id, trigger interface{}) (string, bool) {
 	if trigger != "" {
-		result, err := c.RedisClient.HGet(context.Background(), trigger, strconv.Itoa(id)).Result()
+		result, err := c.RedisClient.HGet(context.Background(), trigger.(string), strconv.FormatFloat(id.(float64), 'f', -1, 64)).Result()
 		if err == redis.Nil {
 			return "", false
 		} else if err != nil {
@@ -20,9 +20,9 @@ func (c *Cache) LoadOneValue(id int, trigger string) (string, bool) {
 	return "", false
 }
 
-func (c *Cache) LoadAllValues(trigger string) (map[string]string, bool) {
+func (c *Cache) LoadAllValues(trigger interface{}) (map[string]string, bool) {
 	if trigger != "" {
-		result, err := c.RedisClient.HGetAll(context.Background(), trigger).Result()
+		result, err := c.RedisClient.HGetAll(context.Background(), trigger.(string)).Result()
 		if err == redis.Nil {
 			return nil, false
 		} else if err != nil {
